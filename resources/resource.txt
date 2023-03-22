@@ -1,0 +1,15 @@
+font			resources\fonts\times.ttf
+beton			resources\images\beton.png
+brick			resources\images\brick.png
+bullet			resources\images\bullet.png
+emeny_tank		resources\images\emeny_tank.png
+ground			resources\images\ground.png
+hedgehog		resources\images\hedgehog.png
+logo			resources\images\logo.jpg
+menu_item		resources\images\menu_item.png
+my_tank			resources\images\my_tank.png
+spawn			resources\images\spawnplace.png
+my_spawn		resources\images\my_spawnplace.png
+bang			resources\music\bang.wav
+moving			resources\music\moving.wav 
+shot			resources\music\shot.wav
