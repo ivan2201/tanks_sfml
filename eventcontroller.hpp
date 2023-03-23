@@ -5,8 +5,8 @@
 #include <functional>
 #include <list>
 #include <SFML/Graphics.hpp>
-#include "onkeylistener.hpp"
-#include "eventlistener.hpp"
+#include "windowmutex.hpp"
+#include "fps.hpp"
 
 class EventController
 {
@@ -43,11 +43,15 @@ private:
   EventController(const EventController &) = delete;
   EventController & operator =(const EventController &) = delete;
   
+  ~EventController() = default;
+  
   bool m_finish;
+  sf::Window * m_window;
   std::thread m_eventControllerThread;
   OnKeyListener m_onKeyListener;
   void (*m_onLMouseClick)(int x, int y);
   void (*m_onChangeSizeListener)(unsigned int width, unsigned int height);
+  void (*m_onClosedListener)();
   
   friend void checkEvents();
 public:
@@ -57,16 +61,20 @@ public:
     static EventController instance;
     return instance;
   }
-
-  ~EventController();
+  
+  void setWindow(sf::Window &);
+  
+  void finish();
   
   void addOnKeyListener(sf::Keyboard::Key key, void (*onKeyDown)(), void (*onKeyUp)());
   void removeOnKeyListener(sf::Keyboard::Key key, void (*onKeyDown)());
 
-  void setChangeSizeListener(void (*onChangeSizeListener)(unsigned int width, unsigned int height));
+  void setOnChangeSizeListener(void (*onChangeSizeListener)(unsigned int width, unsigned int height));
 
-  void setLMouseClickListener(void (*onClick)(int x, int y));
-
+  void setOnLMouseClickListener(void (*onClick)(int x, int y));
+  
+  void setOnClosedListener(void (*onClosed)());
+  
 };
 
 #endif // EVENTCONTROLLER_HPP

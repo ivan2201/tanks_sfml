@@ -3,32 +3,44 @@
 void checkEvents()
 {
   EventController & eventController = EventController::getEventController();
+  sf::Event event;
   while (!eventController.m_finish)
   {
-    sf::Event event;
-    if (event.type == sf::Event::MouseButtonPressed)
+    baho::waitNextFrame(0.25f);
+    if (eventController.m_window != nullptr)
     {
-      if (eventController.m_onLMouseClick != nullptr)
-      {
-        eventController.m_onLMouseClick(event.mouseButton.x, event.mouseButton.y);
+      WindowMutex windowMutex;
+      while(eventController.m_window->pollEvent(event)) {
+        if (event.type == sf::Event::MouseButtonPressed)
+        {
+          if (eventController.m_onLMouseClick != nullptr)
+          {
+            eventController.m_onLMouseClick(event.mouseButton.x, event.mouseButton.y);
+          }
+        }
+        else if (event.type == sf::Event::Resized)
+        {
+          if (eventController.m_onChangeSizeListener != nullptr)
+          {
+            eventController.m_onChangeSizeListener(event.size.width, event.size.height);
+          }
+        }
+        else if (event.type == sf::Event::Closed)
+        {
+          if (eventController.m_onClosedListener != nullptr)
+          {
+            eventController.m_onClosedListener();
+          }
+        }
+        else if (event.type == sf::Event::KeyPressed)
+        {
+          eventController.m_onKeyListener.onEvent(event.key.code, true);
+        }
+        else if (event.type == sf::Event::KeyReleased)
+        {
+          eventController.m_onKeyListener.onEvent(event.key.code, false);
+        }
       }
-      break;
-    }
-    else if (event.type == sf::Event::Resized)
-    {
-      if (eventController.m_onChangeSizeListener != nullptr)
-      {
-        eventController.m_onChangeSizeListener(event.size.width, event.size.height);
-      }
-      break;
-    }
-    else if (event.type == sf::Event::KeyPressed)
-    {
-      eventController.m_onKeyListener.onEvent(event.key.code, true);
-    }
-    else if (event.type == sf::Event::KeyReleased)
-    {
-      eventController.m_onKeyListener.onEvent(event.key.code, false);
     }
   }
 }
@@ -36,29 +48,44 @@ void checkEvents()
 EventController::EventController():
   m_finish(false),
   m_eventControllerThread(checkEvents),
-  m_onLMouseClick(nullptr)
+  m_onLMouseClick(nullptr),
+  m_window(nullptr),
+  m_onChangeSizeListener(nullptr),
+  m_onClosedListener(nullptr)
 {
 }
 
-EventController::~EventController()
+void EventController::finish()
 {
   m_finish = true;
   m_eventControllerThread.join();
 }
 
-void EventController::addOnKeyListener(sf::Keyboard::Key key, void (*onKeyDown)(), void (*onKeyUp)())
+void EventController::setWindow(sf::Window & window)
+{
+  m_window = &window;
+}
+
+void EventController::addOnKeyListener(sf::Keyboard::Key key,
+                                       void (*onKeyDown)(), void (*onKeyUp)())
 {
   m_onKeyListener.addListener(key, onKeyDown, onKeyUp);
 }
 
-void EventController::setChangeSizeListener(void (*onChangeSizeListener)(unsigned int width, unsigned int height))
+void EventController::setOnChangeSizeListener(void (*onChangeSizeListener)(unsigned int width,
+                                                                           unsigned int height))
 {
   m_onChangeSizeListener = onChangeSizeListener;
 }
 
-void EventController::setLMouseClickListener(void (*onClick)(int x, int y))
+void EventController::setOnLMouseClickListener(void (*onClickListener)(int x, int y))
 {
-  m_onLMouseClick = onClick;
+  m_onLMouseClick = onClickListener;
+}
+
+void EventController::setOnClosedListener(void (*onClosedListener)())
+{
+  m_onClosedListener = onClosedListener;
 }
 
 void EventController::removeOnKeyListener(sf::Keyboard::Key key, void (*onKeyDown)())
@@ -74,7 +101,8 @@ EventController::OnKeyListener::~OnKeyListener()
 {
 }
 
-void EventController::OnKeyListener::addListener(sf::Keyboard::Key key, void (*onKeyDown)(), void (*onKeyUp)())
+void EventController::OnKeyListener::addListener(sf::Keyboard::Key key,
+                                                 void (*onKeyDown)(), void (*onKeyUp)())
 {
   auto iter = m_listeners.find(key);
   if (iter != m_listeners.end())
@@ -91,7 +119,8 @@ void EventController::OnKeyListener::addListener(sf::Keyboard::Key key, void (*o
   }
 }
 
-void EventController::OnKeyListener::removeListeners(sf::Keyboard::Key key, void (*onKeyDown)())
+void EventController::OnKeyListener::removeListeners(sf::Keyboard::Key key,
+                                                     void (*onKeyDown)())
 {
   auto iter = m_listeners.find(key);
   if (iter != m_listeners.end())
@@ -108,7 +137,8 @@ void EventController::OnKeyListener::removeListeners(sf::Keyboard::Key key, void
   }
 }
 
-void EventController::OnKeyListener::onEvent(sf::Keyboard::Key key, bool pressed)
+void EventController::OnKeyListener::onEvent(sf::Keyboard::Key key,
+                                             bool pressed)
 {
   auto iter = m_listeners.find(key);
   if (iter != m_listeners.cend())

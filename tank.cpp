@@ -99,12 +99,12 @@ void baho::Tank::setPosition(point_t begin)
       square.top + m_y * m_field.getCellLength());
 }
 
-double baho::Tank::getX() const
+float baho::Tank::getX() const
 {
   return m_x;
 }
 
-double baho::Tank::getY() const
+float baho::Tank::getY() const
 {
   return m_y;
 }
@@ -158,89 +158,89 @@ void baho::Enemy::move(float deltaTime)
   }
   uc min = 0;
   us minDirection = Field::NOPATH;
-  int left = static_cast< int >(m_x - 0.51);
-  int right = static_cast< int >(m_x + 0.51);
-  int up = static_cast< int >(m_y - 0.51);
-  int down = static_cast< int >(m_y + 0.51);
-  int left1 = static_cast< int >(m_x - m_tankMidWidth);
-  int right1 = static_cast< int >(m_x + m_tankMidWidth);
-  int up1 = static_cast< int >(m_y - m_tankMidWidth);
-  int down1 = static_cast< int >(m_y + m_tankMidWidth);
+  int left = static_cast< uc >(m_x - 0.51);
+  int right = static_cast< uc >(m_x + 0.51);
+  int up = static_cast< uc >(m_y - 0.51);
+  int down = static_cast< uc >(m_y + 0.51);
+  int left1 = static_cast< uc >(m_x - m_tankMidWidth);
+  int right1 = static_cast< uc >(m_x + m_tankMidWidth);
+  int up1 = static_cast< uc >(m_y - m_tankMidWidth);
+  int down1 = static_cast< uc >(m_y + m_tankMidWidth);
   bool were_barrier = false;
-  if ((m_x >= 1) && (minDirection >= m_path[up1][left] || minDirection >= m_path[down1][left])
-      && (Field::NOPATH != m_path[up1][left] && Field::NOPATH != m_path[down1][left]))
+  if ((m_x >= 1) && (minDirection >= m_path[left][up1] || minDirection >= m_path[left][down1])
+      && (Field::NOPATH != m_path[left][up1] && Field::NOPATH != m_path[left][down1]))
   {
-    if ((m_field[up1][left].type & BIT_LOCK) == 0 && (m_field[down1][left].type & BIT_LOCK) == 0)
+    if (!(m_field[left][up1].type & BIT_LOCK) && !(m_field[left][down1].type & BIT_LOCK))
     {
-      were_barrier = false;
+      were_barrier = true;
     }
-    if (m_path[up1][left] < m_path[down1][left])
+    if (m_path[left][up1] < m_path[left][down1])
     {
-      minDirection = m_path[up1][left];
+      minDirection = m_path[left][up1];
     }
     else
     {
-      minDirection = m_path[down1][left];
+      minDirection = m_path[left][down1];
     }
     min = BIT_LEFTKEY;
   }
-  if (((m_x + 1) < FIELD_WIDTH) && ((minDirection > m_path[up1][right] || minDirection > m_path[down1][right])
-      || (were_barrier && (minDirection == m_path[up1][right] || minDirection == m_path[down1][right])))
-        && (Field::NOPATH != m_path[up1][right] && Field::NOPATH != m_path[down1][right]))
+  if (((m_x + 1) < FIELD_WIDTH) && ((minDirection > m_path[right][up1] || minDirection > m_path[right][down1])
+      || (were_barrier && (minDirection == m_path[right][up1] || minDirection == m_path[right][down1])))
+        && (Field::NOPATH != m_path[right][up1] && Field::NOPATH != m_path[right][down1]))
   {
-    if ((m_field[up1][right].type & BIT_LOCK) == 0 && (m_field[down1][right].type & BIT_LOCK) == 0)
+    if (!(m_field[right][up1].type & BIT_LOCK) && !(m_field[right][down1].type & BIT_LOCK))
     {
-      were_barrier = false;
+      were_barrier = true;
     }
-    if (m_path[up1][right] < m_path[down1][right])
+    if (m_path[right][up1] < m_path[right][down1])
     {
-      minDirection = m_path[up1][right];
+      minDirection = m_path[right][up1];
     }
     else
     {
-      minDirection = m_path[down1][right];
+      minDirection = m_path[right][down1];
     }
     min = BIT_RIGHTKEY;
   }
-  if ((m_y >= 1) && ((minDirection > m_path[up][left1] || minDirection > m_path[up][right1]) 
-      || (were_barrier && (minDirection == m_path[up][left1] || minDirection == m_path[up][right1])))
-      && (Field::NOPATH != m_path[up][left1] && Field::NOPATH != m_path[up][right1]))
+  if ((m_y >= 1) && ((minDirection > m_path[left1][up] || minDirection > m_path[right1][up]) 
+      || (were_barrier && (minDirection == m_path[left1][up] || minDirection == m_path[right1][up])))
+      && (Field::NOPATH != m_path[left1][up] && Field::NOPATH != m_path[right1][up]))
   {
-    if ((m_field[up][left1].type & BIT_LOCK) == 0 && (m_field[up][right1].type & BIT_LOCK) == 0)
+    if (!(m_field[left1][up].type & BIT_LOCK) && !(m_field[right1][up].type & BIT_LOCK))
     {
-      were_barrier = false;
+      were_barrier = true;
     }
-    if (m_path[up][left1] < m_path[up][right1])
+    if (m_path[left1][up] < m_path[right1][up])
     {
-      minDirection = m_path[up][left1];
+      minDirection = m_path[left1][up];
     }
     else
     {
-      minDirection = m_path[up][right1];
+      minDirection = m_path[right1][up];
     }
     min = BIT_UPKEY;
   }
-  if (((m_y + 1) < FIELD_WIDTH) && ((minDirection > m_path[down][left1] || minDirection > m_path[down][right1]) 
-      || (were_barrier && (minDirection == m_path[down][left1] || minDirection == m_path[down][right1])))
-      && ((Field::NOPATH != m_path[down][left1]) && (Field::NOPATH != m_path[down][right1])))
+  if (((m_y + 1) < FIELD_WIDTH) && ((minDirection > m_path[left1][down] || minDirection > m_path[right1][down]) 
+      || (were_barrier && (minDirection == m_path[left1][down] || minDirection == m_path[right1][down])))
+      && ((Field::NOPATH != m_path[left1][down]) && (Field::NOPATH != m_path[right1][down])))
   {
-    if (m_path[down][left1] < m_path[down][right1])
+    if (m_path[left1][down] < m_path[right1][down])
     {
-      minDirection = m_path[down][left1];
+      minDirection = m_path[left1][down];
     }
     else
     {
-      minDirection = m_path[down][right1];
+      minDirection = m_path[right1][down];
     }
     min = BIT_DOWNKEY;
   }
   if (minDirection == Field::NOPATH) return;
   float speed = getSpeed();
   if (minDirection < 2) speed = 0;
-  left = static_cast< int >(m_x - m_tankMidWidth);
-  right = static_cast< int >(m_x + m_tankMidWidth);
-  up = static_cast< int >(m_y - m_tankMidWidth);
-  down = static_cast< int >(m_y + m_tankMidWidth);
+  left = static_cast< uc >(m_x - m_tankMidWidth);
+  right = static_cast< uc >(m_x + m_tankMidWidth);
+  up = static_cast< uc >(m_y - m_tankMidWidth);
+  down = static_cast< uc >(m_y + m_tankMidWidth);
   switch (min)
   {
   case BIT_LEFTKEY:
@@ -249,12 +249,12 @@ void baho::Enemy::move(float deltaTime)
       m_image.setRotation(270.f);
       m_rotation = BIT_LEFTKEY;
     }
-    if ((m_x > 1) && ((m_field[up][left].type & BIT_LOCK) == 0) && ((m_field[down][left].type & BIT_LOCK) == 0))
+    if ((m_x > 1) && !(m_field[left][up].type & BIT_LOCK) && !(m_field[left][down].type & BIT_LOCK))
     {
       m_x -= speed * deltaTime;
-      if (((m_field[up][static_cast< int >(m_x - m_tankMidWidth)].type & BIT_LOCK) != 0)
-          || ((m_field[down][static_cast< int >(m_x - m_tankMidWidth)].type & BIT_LOCK) != 0))
-            m_x = static_cast< int >(m_x) + m_midWidthPlusEps;
+      if ((m_field[static_cast< uc >(m_x - m_tankMidWidth)][up].type & BIT_LOCK) ||
+          (m_field[static_cast< uc >(m_x - m_tankMidWidth)][down].type & BIT_LOCK))
+            m_x = static_cast< uc >(m_x) + m_midWidthPlusEps;
     }
     else return;
     break;
@@ -264,13 +264,15 @@ void baho::Enemy::move(float deltaTime)
       m_image.setRotation(90.f);
       m_rotation = BIT_RIGHTKEY;
     }
-    if (((m_x + 1) < FIELD_WIDTH) && ((m_field[up][right].type & BIT_LOCK) == 0)
-        && ((m_field[down][right].type & BIT_LOCK) == 0))
+    if (((m_x + 1) < FIELD_WIDTH) && !(m_field[right][up].type & BIT_LOCK) &&
+                                     !(m_field[right][down].type & BIT_LOCK))
     {
       m_x += speed * deltaTime;
-      if (((m_field[up][static_cast< int >(m_x + m_tankMidWidth)].type & BIT_LOCK) != 0)
-          || ((m_field[down][static_cast< int >(m_x + m_tankMidWidth)].type & BIT_LOCK) != 0))
-            m_x = static_cast< int >(m_x + m_midWidthPlusEps) - m_midWidthPlusEps; 
+      if ((m_field[static_cast< uc >(m_x + m_tankMidWidth)][up].type & BIT_LOCK) ||
+          (m_field[static_cast< uc >(m_x + m_tankMidWidth)][down].type & BIT_LOCK))
+      {
+        m_x = static_cast< uc >(m_x + m_midWidthPlusEps) - m_midWidthPlusEps;
+      }
     }
     else return;
     break;
@@ -280,12 +282,14 @@ void baho::Enemy::move(float deltaTime)
       m_image.setRotation(0.f);
       m_rotation = BIT_UPKEY;
     }
-    if ((m_y > 1) && ((m_field[up][left].type & BIT_LOCK) == 0) && ((m_field[up][right].type & BIT_LOCK) == 0))
+    if ((m_y > 1) && !(m_field[left][up].type & BIT_LOCK) && !(m_field[right][up].type & BIT_LOCK))
     {
       m_y -= speed * deltaTime;
-      if (((m_field[static_cast< int >(m_y - m_tankMidWidth)][left].type & BIT_LOCK) != 0)
-          || ((m_field[static_cast< int >(m_y - m_tankMidWidth)][right].type & BIT_LOCK) != 0))
-            m_y = static_cast< int >(m_y) + m_midWidthPlusEps;
+      if ((m_field[left][static_cast< uc >(m_y - m_tankMidWidth)].type & BIT_LOCK) ||
+          (m_field[right][static_cast< uc >(m_y - m_tankMidWidth)].type & BIT_LOCK))
+      {
+        m_y = static_cast< uc >(m_y) + m_midWidthPlusEps;
+      }
     }
     else return;
     break;
@@ -295,13 +299,15 @@ void baho::Enemy::move(float deltaTime)
       m_image.setRotation(180.f);
       m_rotation = BIT_DOWNKEY;
     }
-    if (((m_y + 1) < FIELD_WIDTH) && ((m_field[down][left].type & BIT_LOCK) == 0)
-          && ((m_field[down][right].type & BIT_LOCK) == 0))
+    if (((m_y + 1) < FIELD_WIDTH) && !(m_field[left][down].type & BIT_LOCK)
+          && !(m_field[right][down].type & BIT_LOCK))
     {
       m_y += speed * deltaTime;
-      if (((m_field[static_cast< int >(m_y + m_tankMidWidth)][left].type & BIT_LOCK) != 0)
-          || ((m_field[static_cast< int >(m_y + m_tankMidWidth)][right].type & BIT_LOCK) != 0))
-            m_y = static_cast< int >(m_y + m_midWidthPlusEps) - m_midWidthPlusEps;
+      if ((m_field[left][static_cast< uc >(m_y + m_tankMidWidth)].type & BIT_LOCK) ||
+          (m_field[right][static_cast< uc >(m_y + m_tankMidWidth)].type & BIT_LOCK))
+      {
+        m_y = static_cast< uc >(m_y + m_midWidthPlusEps) - m_midWidthPlusEps;
+      }
     }
     else return;
     break;
@@ -327,63 +333,67 @@ void baho::MyTank::move(uc type, float deltaTime)
       m_destroyAnimationFinish = true;
       return;
     }
-    m_image.setColor(sf::Color(0xFF,0xFF,0xFF,static_cast < uc >(255 - 255 / 3 * m_time)));
+    m_image.setColor(sf::Color(0xFF, 0xFF, 0xFF, static_cast < uc >(255 - 255 / 3 * m_time)));
     m_time += deltaTime;
     return;
   }
   float wereX = m_x;
-  const int left = static_cast< int >(m_x - m_tankMidWidth);
-  const int right = static_cast< int >(m_x + m_tankMidWidth);
-  const int up = static_cast< int >(m_y - m_tankMidWidth);
-  const int down = static_cast< int >(m_y + m_tankMidWidth);
+  const uc left = static_cast< uc >(m_x - m_tankMidWidth);
+  const uc right = static_cast< uc >(m_x + m_tankMidWidth);
+  const uc up = static_cast< uc >(m_y - m_tankMidWidth);
+  const uc down = static_cast< uc >(m_y + m_tankMidWidth);
   if (type == 0) return;
   float speed = getSpeed();
-  if ((type & BIT_LEFTKEY) != 0)
+  if (type & BIT_LEFTKEY)
   {
     if (m_rotation != BIT_LEFTKEY)
     {
       m_image.setRotation(270.f);
       m_rotation = BIT_LEFTKEY;
     }
-    if ((m_x > 1) && ((m_field[up][left].type & BIT_LOCK) == 0) && ((m_field[down][left].type & BIT_LOCK) == 0))
+    if ((m_x > 1) && !(m_field[left][up].type & BIT_LOCK) && !(m_field[left][down].type & BIT_LOCK))
     {
       m_x -= speed * deltaTime;
-      if (((m_field[up][static_cast< int >(m_x - m_midWidthPlusEps)].type & BIT_LOCK) != 0)
-          || ((m_field[down][static_cast< int >(m_x - m_midWidthPlusEps)].type & BIT_LOCK) != 0))
-            m_x = static_cast< int >(m_x) + m_midWidthPlusEps;
+      if ((m_field[static_cast< uc >(m_x - m_midWidthPlusEps)][up].type & BIT_LOCK) ||
+          (m_field[static_cast< uc >(m_x - m_midWidthPlusEps)][down].type & BIT_LOCK))
+      {
+        m_x = static_cast< uc >(m_x) + m_midWidthPlusEps;
+      }
     }
   }
-  if ((type & BIT_RIGHTKEY) != 0)
+  if (type & BIT_RIGHTKEY)
   {
     if (m_rotation != BIT_RIGHTKEY)
     {
       m_image.setRotation(90.f);
       m_rotation = BIT_RIGHTKEY;
     }
-    if ((m_x + 1 < FIELD_WIDTH) && ((m_field[up][right].type & BIT_LOCK) == 0)
-        && ((m_field[down][right].type & BIT_LOCK) == 0))
+    if ((m_x + 1 < FIELD_WIDTH) && !(m_field[right][up].type & BIT_LOCK) && 
+                                   !(m_field[right][down].type & BIT_LOCK))
     {
       m_x += speed * deltaTime;
-      if (((m_field[up][static_cast< int >(m_x + m_midWidthPlusEps)].type & BIT_LOCK) != 0)
-          || ((m_field[down][static_cast< int >(m_x + m_midWidthPlusEps)].type & BIT_LOCK) != 0))
-            m_x = static_cast< int >(m_x + m_midWidthPlusEps) - m_midWidthPlusEps; 
+      if ((m_field[static_cast< uc >(m_x + m_midWidthPlusEps)][up].type & BIT_LOCK) ||
+          (m_field[static_cast< uc >(m_x + m_midWidthPlusEps)][down].type & BIT_LOCK))
+      {
+        m_x = static_cast< uc >(m_x + m_midWidthPlusEps) - m_midWidthPlusEps; 
+      }
     }
   }
-  if ((type & BIT_UPKEY) != 0)
+  if (type & BIT_UPKEY)
   {
     if (m_rotation != BIT_UPKEY)
     {
       m_image.setRotation(0.f);
       m_rotation = BIT_UPKEY;
     }
-    if ((m_y > 1) && ((m_field[up][left].type & BIT_LOCK) == 0)
-        && ((m_field[up][right].type & BIT_LOCK) == 0))
+    if ((m_y > 1) && !(m_field[left][up].type & BIT_LOCK) &&
+                     !(m_field[right][up].type & BIT_LOCK))
     {
       m_y -= speed * deltaTime;
-      if (((m_field[static_cast< int >(m_y - m_midWidthPlusEps)][left].type & BIT_LOCK) != 0)
-          || ((m_field[static_cast< int >(m_y - m_midWidthPlusEps)][right].type & BIT_LOCK) != 0))
+      if ((m_field[left][static_cast< uc >(m_y - m_midWidthPlusEps)].type & BIT_LOCK) ||
+          (m_field[right][static_cast< uc >(m_y - m_midWidthPlusEps)].type & BIT_LOCK))
       {
-        m_y = static_cast< int >(m_y) + m_midWidthPlusEps;
+        m_y = static_cast< uc >(m_y) + m_midWidthPlusEps;
       }
       else
       {
@@ -391,7 +401,7 @@ void baho::MyTank::move(uc type, float deltaTime)
       }
     }
   }
-  if ((type & BIT_DOWNKEY) != 0)
+  if (type & BIT_DOWNKEY)
   {
     uc wereRotation = m_rotation;
     if (m_rotation != BIT_DOWNKEY)
@@ -399,15 +409,14 @@ void baho::MyTank::move(uc type, float deltaTime)
       m_image.setRotation(180.f);
       m_rotation = BIT_DOWNKEY;
     }
-    if ((m_y + 1 < FIELD_WIDTH)
-        && ((m_field[down][left].type & BIT_LOCK) == 0)
-          && ((m_field[down][right].type & BIT_LOCK) == 0))
+    if ((m_y + 1 < FIELD_WIDTH) && !(m_field[left][down].type & BIT_LOCK) &&
+                                   !(m_field[right][down].type & BIT_LOCK))
     {
       m_y += speed * deltaTime;
-      if(((m_field[static_cast< int >(m_y + m_midWidthPlusEps)][left].type & BIT_LOCK) != 0)
-          || ((m_field[static_cast< int >(m_y + m_midWidthPlusEps)][right].type & BIT_LOCK) != 0))
+      if((m_field[left][static_cast< uc >(m_y + m_midWidthPlusEps)].type & BIT_LOCK) ||
+         (m_field[right][static_cast< uc >(m_y + m_midWidthPlusEps)].type & BIT_LOCK))
       {
-        m_y = static_cast< int >(m_y + m_midWidthPlusEps) - m_midWidthPlusEps;
+        m_y = static_cast< uc >(m_y + m_midWidthPlusEps) - m_midWidthPlusEps;
       }
       else
       {
@@ -423,4 +432,4 @@ void baho::MyTank::move(uc type, float deltaTime)
 float baho::MyTank::getSpeed()
 {
   return 2.0f;
-}
+} 

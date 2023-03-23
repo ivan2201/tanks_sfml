@@ -23,7 +23,6 @@ Resources::Resources(const std::string & fileResourcePath)
   {
     std::string name, path;
     fileWithResource >> name >> path;
-    //if (fileWithResource.eof()) break;
     resources.insert({name, path});
   }
 }
@@ -42,7 +41,7 @@ sf::Texture Resources::getTexture(const std::string & name)
   }
   sf::Texture texture;
   if (!texture.loadFromFile(iter->second))
-    throw std::invalid_argument("resource not found by path" + iter->second);
+    throw std::invalid_argument("resource not found by path: " + iter->second);
   return texture;
 }
 
@@ -55,7 +54,7 @@ sf::Font Resources::getFont(const std::string & fontName)
   }
   sf::Font font;
   if (!font.loadFromFile(iter->second))
-    throw std::invalid_argument("resource not found by path" + iter->second);
+    throw std::invalid_argument("resource not found by path: " + iter->second);
   return font;
 }
 
@@ -68,6 +67,6 @@ sf::SoundBuffer Resources::getSoundBuffer(const std::string & musicName)
   }
   sf::SoundBuffer music;
   if (!(music.loadFromFile(iter->second)))
-    throw std::invalid_argument("resource not found by path" + iter->second);
+    throw std::invalid_argument("resource not found by path: " + iter->second);
   return music;
 }

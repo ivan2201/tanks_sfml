@@ -3,12 +3,19 @@
 #include <SFML/Graphics.hpp>
 #include "SFML/Audio.hpp"
 #include <list>
-#include "memory"
+#include <memory>
+#include <array>
+#include <queue>
+#include <math.h>
+#include <iostream>
 #include "resources.hpp"
+#include "mymath.hpp"
 #include "eventcontroller.hpp"
 #include "definition.hpp"
 #include "tank.hpp"
 #include "bullet.hpp"
+#include "windowmutex.hpp"
+#include "fps.hpp"
 
 class Game
 {
@@ -43,6 +50,8 @@ private:
   sf::Texture m_textures[10];
   std::list< baho::Enemy > m_enemys;
   std::list< Bullet > m_bullets;
+  std::array<point_t, ENEMY_SPAWNER_NUMBER> m_spawners;
+  std::array<float, BEGIN_ENEMY_NUMBER> m_lastShotTime;
   Bullet m_preBullet;
   baho::Enemy m_preEnemy;
   sf::SoundBuffer m_buffer[3];

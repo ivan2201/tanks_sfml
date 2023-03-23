@@ -10,6 +10,11 @@ static constexpr const char * resources_file_path = "resources/resource.txt";
 
 static constexpr uc FIELD_WIDTH = 25;
 
+static constexpr uc ENEMY_SPAWNER_DELTA = 4;
+
+//за вычетом крайних
+static constexpr uc ENEMY_SPAWNER_NUMBER = FIELD_WIDTH / ENEMY_SPAWNER_DELTA - 1;
+
 static constexpr int BEGIN_ENEMY_NUMBER = 10;
 
 static constexpr uc BIT_UNDESTROYED = 0x04;
@@ -28,7 +33,7 @@ static constexpr uc BIT_UPKEY = 0x02;
 static constexpr uc BIT_RIGHTKEY = 0x04;
 static constexpr uc BIT_DOWNKEY = 0x08;
 
-static constexpr int FRAMERATE_LIMIT = 60;
+static constexpr us FRAMERATE_LIMIT = 60;
 
 
 struct square_t

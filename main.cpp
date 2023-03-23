@@ -6,9 +6,9 @@
 
 int main()
 {
-    sf::RenderWindow SFMLView(sf::VideoMode(1280,1024), "tanks");
+    sf::RenderWindow SFMLView(sf::VideoMode(1280,720), "tanks");
     SFMLView.setFramerateLimit(FRAMERATE_LIMIT);
-    sf::Vector2u windowRect(1024, 1280);
+    sf::Vector2u windowRect = SFMLView.getSize();
     int result = 0;
     try
     {
@@ -45,7 +45,7 @@ int main()
       stream.open("log.txt");
       if (stream.is_open())
       {
-        stream << "unknown error";
+        stream << "unknown error ";
         stream.flush();
         stream.close();
       }

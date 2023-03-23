@@ -18,8 +18,8 @@ namespace baho
     void setPosition(point_t begin);
     void setSprite(const sf::Sprite & sprite);
     Bullet shot(Bullet prototype);
-    double getX() const;
-    double getY() const;
+    float getX() const;
+    float getY() const;
     void destroy();
     bool isDestroyed() const;
     bool mayDelete() const;

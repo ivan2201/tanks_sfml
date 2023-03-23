@@ -1,11 +1,13 @@
 #ifndef MAINMENU_HPP
 #define MAINMENU_HPP
 #include <atomic>
-#include "eventlistener.hpp"
-#include "onkeylistener.hpp"
+#include <SFML/Graphics.hpp>
+#include <math.h>
 #include "eventcontroller.hpp"
 #include "resources.hpp"
 #include "game.hpp"
+#include "fps.hpp"
+#include "windowmutex.hpp"
 
 class MainMenu
 {
